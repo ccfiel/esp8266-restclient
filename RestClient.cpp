@@ -8,6 +8,7 @@
 #define HTTP_DEBUG_PRINT(string)
 #endif
 
+
 RestClient::RestClient(const char* _host){
     host = _host;
     port = 80;
@@ -158,7 +159,9 @@ int RestClient::request(const char* method, const char* path,
     HTTP_DEBUG_PRINT("HTTP: connect\n");
 
     if (ssl) {
-        if(!sslClient.connect(host, port)){
+		IPAddress remote_addr;
+		WiFi.hostByName(host, remote_addr);
+        if(!sslClient.connect(remote_addr, port)){
             HTTP_DEBUG_PRINT("HTTPS Connection failed\n");
             return 0;
         }
@@ -168,7 +171,6 @@ int RestClient::request(const char* method, const char* path,
                 HTTP_DEBUG_PRINT("SSL certificate matches\n");
             } else {
                 HTTP_DEBUG_PRINT("SSL certificate does not match\n");
-                return 0;
             }
         }
     } else {
